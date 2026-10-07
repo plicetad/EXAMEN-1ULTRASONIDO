@@ -53,7 +53,7 @@
       flex-wrap: wrap;
       justify-content: space-around;
       align-content: space-around;
-      opacity: 0.07;
+      opacity: 0.06;
       overflow: hidden;
     }
 
@@ -89,7 +89,7 @@
     }
 
     .container {
-      max-width: 820px;
+      max-width: 840px;
       margin: 0 auto;
       padding: 16px;
       position: relative;
@@ -371,24 +371,27 @@
       font-weight: 600;
     }
 
-    /* Navigation Grid */
+    /* Navigation Grid - 50 items */
     .nav-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
-      gap: 6px;
-      margin: 16px 0;
+      grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+      gap: 5px;
+      margin: 14px 0;
+      max-height: 160px;
+      overflow-y: auto;
+      padding: 4px;
     }
 
     .nav-btn {
-      height: 36px;
-      border-radius: 6px;
+      height: 32px;
+      border-radius: 5px;
       background: #edf2f7;
       border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       color: #4a5568;
     }
@@ -404,7 +407,6 @@
       outline-offset: 1px;
     }
 
-    /* Anti-print */
     @media print {
       body * {
         display: none !important;
@@ -440,7 +442,7 @@
     <div class="card" style="text-align: center; border-top: 5px solid var(--primary);">
       <div style="font-size: 12px; font-weight: 800; color: var(--accent); letter-spacing: 1px; margin-bottom: 4px;">CÁTEDRA DE RADIOLOGÍA MÉDICA • RAD 01-028</div>
       <h1 style="font-size: 22px; font-weight: 800; color: var(--primary); margin-bottom: 8px;">PRIMER EXAMEN PARCIAL: ULTRASONIDO DIAGNÓSTICO</h1>
-      <p style="color: var(--text-muted); font-size: 14px;">Docente: Lic. Adán Ariel Plicet Gutiérrez | Ponderación: 100 Puntos | Tiempo: 120 Minutos</p>
+      <p style="color: var(--text-muted); font-size: 14px;">Docente: Lic. Adán Ariel Plicet Gutiérrez | Ponderación: 100 Puntos (50 Preguntas × 2 pts) | Tiempo: 120 Minutos</p>
     </div>
 
     <div class="card">
@@ -464,9 +466,10 @@
       <div style="background: #fff8e1; border-left: 4px solid var(--gold); padding: 16px; border-radius: 6px; margin: 20px 0; font-size: 13.5px; color: #5d4037;">
         <strong>🛡️ CONDICIONES DE SEGURIDAD (PROTOCOLO ANTI-IA Y ANTI-CAPTURA):</strong>
         <ul style="margin-left: 18px; margin-top: 8px; line-height: 1.6;">
-          <li>Tiempo asignado: <strong>120 minutos (2 horas)</strong> para 20 preguntas (5 pts c/u = 100 pts).</li>
+          <li>Total: <strong>50 preguntas de selección única a 2 puntos cada una = 100 PUNTOS</strong>.</li>
+          <li>Tiempo total: <strong>120 minutos (2 horas)</strong>.</li>
           <li>El examen se ejecutará estrictamente en <strong>Pantalla Completa</strong>.</li>
-          <li><strong>PROHIBIDO CAPTURAS DE PANTALLA:</strong> Los atajos de captura (PrintScreen, Win+Shift+S, Cmd+Shift+3/4/5) están bloqueados y oscurecen la pantalla inmediatamente.</li>
+          <li><strong>PROHIBIDO CAPTURAS DE PANTALLA:</strong> Los atajos de captura están bloqueados y oscurecen la pantalla inmediatamente.</li>
           <li><strong>PROHIBIDO SALIR DE LA PESTAÑA:</strong> Minimizar la ventana o abrir otra aplicación activará una alarma e incrementará el contador de infracciones.</li>
           <li>Al acumular <strong>3 infracciones</strong>, el examen se bloqueará de forma irreversible y se enviará automáticamente.</li>
         </ul>
@@ -504,9 +507,9 @@
       
       <!-- Quick Navigation Grid -->
       <div class="card" style="padding: 14px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Mapeo de Preguntas</span>
-          <span id="answered-counter" style="font-size: 12.5px; font-weight: 700; color: var(--accent);">0 de 20 respondidas</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Mapeo de Preguntas (50)</span>
+          <span id="answered-counter" style="font-size: 12.5px; font-weight: 700; color: var(--accent);">0 de 50 respondidas</span>
         </div>
         <div class="nav-grid" id="nav-grid"></div>
       </div>
@@ -520,7 +523,7 @@
       <div style="display: flex; justify-content: space-between; gap: 12px; margin-bottom: 40px;">
         <button id="btn-prev" class="btn" style="background: #e2e8f0; color: #4a5568;">← Anterior</button>
         <button id="btn-next" class="btn btn-primary">Siguiente →</button>
-        <button id="btn-finish" class="btn btn-success" style="display: none;">Finalizar y Calificar Examen</button>
+        <button id="btn-finish" class="btn btn-success" style="display: none;">Finalizar y Enviar Examen</button>
       </div>
 
     </div>
@@ -540,18 +543,23 @@
       <h3 id="status-title" style="font-size: 18px; margin-bottom: 8px;"></h3>
       <p id="status-desc" style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;"></p>
 
+      <!-- Sync Status Box with Google Sheets -->
+      <div id="sync-status-box" style="margin-bottom: 16px; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; display: block; background: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7;">
+        📡 Conectando con la planilla del docente...
+      </div>
+
       <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: left; font-size: 13.5px; margin-bottom: 20px;">
         <div style="margin-bottom: 6px;"><strong>Estudiante:</strong> <span id="res-name"></span></div>
         <div style="margin-bottom: 6px;"><strong>Cédula:</strong> <span id="res-id"></span></div>
         <div style="margin-bottom: 6px;"><strong>Grupo:</strong> <span id="res-group"></span></div>
         <div style="margin-bottom: 6px;"><strong>Fecha y Hora de Entrega:</strong> <span id="res-date"></span></div>
-        <div style="margin-bottom: 6px;"><strong>Aciertos:</strong> <span id="res-correct"></span> de 20 preguntas (5 pts c/u)</div>
+        <div style="margin-bottom: 6px;"><strong>Aciertos:</strong> <span id="res-correct"></span> de 50 preguntas (2 pts c/u)</div>
         <div style="margin-bottom: 6px;"><strong>Infracciones registradas:</strong> <span id="res-infractions"></span></div>
         <div><strong>Código Cifrado de Verificación:</strong> <code id="res-hash" style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-size:12px;"></code></div>
       </div>
 
       <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-        📸 <strong>Por favor tome una captura de pantalla a este comprobante</strong> para su constancia ante el docente.
+        📸 <strong>Tome una captura de pantalla a este comprobante</strong> para su constancia oficial.
       </p>
 
       <button onclick="window.print()" class="btn btn-primary" style="margin-bottom: 10px;">
@@ -575,8 +583,13 @@
   </div>
 
   <script>
-    // --- EXAM DATA & STATE ---
-    const rawQuestions = [{"id": 1, "ref": "Temario 1.1", "category": "Módulo I: Biofísica del Ultrasonido", "text": "Respecto a la naturaleza del ultrasonido médico, ¿cómo se define textualmente su mecanismo de propagación física y qué velocidad media constante asume el equipo en tejidos blandos?", "options": [{"letter": "A", "text": "Onda electromagnética transversal que viaja a la velocidad de la luz (300,000 km/s)."}, {"letter": "B", "text": "Onda mecánica longitudinal con ciclos alternos de compresión y rarefacción, calibrada a c = 1540 m/s (1.54 mm/µs)."}, {"letter": "C", "text": "Radiación corpuscular ionizante que se propaga a 330 m/s a través del vacío."}, {"letter": "D", "text": "Onda de torsión superficial que no requiere soporte material elástico para desplazarse."}], "ans": "B", "just": "Mecánica longitudinal / c = 1540 m/s"}, {"id": 2, "ref": "Temario 1.2", "category": "Módulo I: Biofísica del Ultrasonido", "text": "El efecto piezoeléctrico inverso, fundamental para la emisión del haz ultrasónico en el paciente, consiste en:", "options": [{"letter": "A", "text": "La deformación del cristal por el eco de retorno para generar señales de microvoltaje."}, {"letter": "B", "text": "La aplicación de un pulso de voltaje eléctrico alterno sobre el cristal PZT que lo hace vibrar mecánicamente y emitir sonido."}, {"letter": "C", "text": "La elevación de la temperatura por encima del límite de Curie durante el escaneo."}, {"letter": "D", "text": "La orientación dipolar de los hematíes circulantes mediante radiofrecuencia."}], "ans": "B", "just": "Voltaje eléctrico produce vibración acústica"}, {"id": 3, "ref": "Temario 1.2", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Cuál es el material cerámico sintético empleado industrialmente en la fabricación de los cristales piezoeléctricos y qué condición crítica de bioseguridad térmica debe respetarse?", "options": [{"letter": "A", "text": "Sulfato de Bario purificado a temperatura ambiente."}, {"letter": "B", "text": "Cuarzo natural polarizado a 100 °C de temperatura constante."}, {"letter": "C", "text": "Titanato Zirconato de Plomo (PZT), el cual se despolariza y destruye si supera la temperatura de Curie."}, {"letter": "D", "text": "Tungsteno sinterizado resistente a la despolarización magnética."}], "ans": "C", "just": "PZT / despolariza sobre temperatura de Curie"}, {"id": 4, "ref": "Temario 1.3", "category": "Módulo I: Biofísica del Ultrasonido", "text": "De acuerdo con la fórmula de impedancia acústica (Z = ρ · c, en Rayls), ¿qué ocurre en una interfase con disparidad extrema (ΔZ grande) como tejido blando / hueso o tejido blando / aire?", "options": [{"letter": "A", "text": "Se transmite el 100% de la energía hacia las estructuras anatómicas profundas."}, {"letter": "B", "text": "Ocurre dispersión caótica omnidireccional sin ningún eco de retorno."}, {"letter": "C", "text": "Se produce una reflexión cercana al 99.9% del haz en la superficie, impidiendo la penetración y generando sombra acústica."}, {"letter": "D", "text": "La longitud de onda aumenta hasta volverse audible para el tecnólogo."}], "ans": "C", "just": "ΔZ extrema / reflexión cercana al 99.9%"}, {"id": 5, "ref": "Temario 1.3", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Cuál es la función obligatoria del gel de acoplamiento acústico según la regla clínica de oro del temario?", "options": [{"letter": "A", "text": "Desinfectar la epidermis y eliminar la flora bacteriana antes de la punción."}, {"letter": "B", "text": "Poseer una impedancia idéntica a la piel (Z ≈ 1.5 × 10⁶ Rayls) para expulsar el aire que reflejaría el 99.9% del haz."}, {"letter": "C", "text": "Enfriar la superficie de contacto para poder incrementar la potencia acústica al doble."}, {"letter": "D", "text": "Actuar como catalizador químico de las ondas mecánicas reflejadas."}], "ans": "B", "just": "Elimina aire / iguala impedancia acústica"}, {"id": 6, "ref": "Temario 1.4", "category": "Módulo I: Biofísica del Ultrasonido", "text": "De los cuatro fenómenos de atenuación, ¿cuál representa el componente principal (más del 80%) de la pérdida de energía del haz sonoro en el cuerpo?", "options": [{"letter": "A", "text": "Refracción por Ley de Snell en bordes anatómicos."}, {"letter": "B", "text": "Absorción, consistente en la conversión de energía acústica en calor tisular."}, {"letter": "C", "text": "Reflexión especular en el diafragma y la cápsula hepática."}, {"letter": "D", "text": "Dispersión omnidireccional en el parénquima de órganos sólidos."}], "ans": "B", "just": "Absorción / conversión a calor tisular"}, {"id": 7, "ref": "Temario 1.4", "category": "Módulo I: Biofísica del Ultrasonido", "text": "El ecopatrón granular homogéneo de grano fino que exhibe el parénquima de órganos como el hígado o el bazo se produce primariamente por:", "options": [{"letter": "A", "text": "Refracción crítica en las venas suprahepáticas."}, {"letter": "B", "text": "Reflexión especular en ángulo recto sobre la cápsula de Glisson."}, {"letter": "C", "text": "Dispersión acústica (scattering) en interfases microscópicas menores a la longitud de onda."}, {"letter": "D", "text": "Sobreexposición de ganancia global en la consola."}], "ans": "C", "just": "Dispersión (scattering) en interfases celulares"}, {"id": 8, "ref": "Temario 1.4", "category": "Módulo I: Biofísica del Ultrasonido", "text": "Según la Ley de Snell, ¿cuáles son los dos requisitos físicos indispensables para que se produzca el fenómeno de refracción acústica?", "options": [{"letter": "A", "text": "Incidencia perpendicular exacta (90°) e idéntica velocidad acústica entre ambos medios."}, {"letter": "B", "text": "Insonación sobre colecciones líquidas puras y densas sin ecos."}, {"letter": "C", "text": "Incidencia oblicua (no perpendicular) e interfase entre medios con diferente velocidad de propagación."}, {"letter": "D", "text": "Utilizar exclusivamente transductores convexos de baja frecuencia."}], "ans": "C", "just": "Incidencia oblicua + diferente velocidad tisular"}, {"id": 9, "ref": "Temario 1.5", "category": "Módulo I: Biofísica del Ultrasonido", "text": "Considerando la ecuación biofísica λ = c / f, ¿qué compromiso asume el operador al seleccionar una frecuencia elevada (7.5 a 15 MHz)?", "options": [{"letter": "A", "text": "Mayor penetración profunda sacrificando la resolución espacial en superficie."}, {"letter": "B", "text": "Longitud de onda corta, excelente resolución de detalle fino, pero alta tasa de atenuación que limita la penetración a pocos centímetros."}, {"letter": "C", "text": "Duplicación del ancho del haz en campo lejano con pérdida de resolución axial."}, {"letter": "D", "text": "Aumento de la velocidad de propagación en tejidos blandos por encima de 2000 m/s."}], "ans": "B", "just": "Alta resolución / menor penetración por atenuación"}, {"id": 10, "ref": "Temario 1.5", "category": "Módulo I: Biofísica del Ultrasonido", "text": "La resolución axial (capacidad de diferenciar dos reflectores paralelos alineados a lo largo del haz) depende matemáticamente de:", "options": [{"letter": "A", "text": "La mitad de la Longitud Espacial del Pulso (SPL / 2)."}, {"letter": "B", "text": "El ancho del haz acústico en la zona de foco."}, {"letter": "C", "text": "La ganancia en decibeles del amplificador principal."}, {"letter": "D", "text": "El ángulo de curvatura física de la sonda convexa."}], "ans": "A", "just": "Mitad de longitud espacial del pulso (SPL / 2)"}, {"id": 11, "ref": "Temario 2.1", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Qué bloque del ecógrafo es el encargado directo de controlar la potencia acústica de salida (Acoustic Power) y la Frecuencia de Repetición de Pulsos (PRF)?", "options": [{"letter": "A", "text": "El conversor digital de barrido (Scan Converter)."}, {"letter": "B", "text": "El generador de pulsos (Pulser / Transmisor)."}, {"letter": "C", "text": "El banco vertical de potenciómetros TGC."}, {"letter": "D", "text": "El monitor con memoria de cine loop."}], "ans": "B", "just": "Pulser / controla PRF y potencia acústica"}, {"id": 12, "ref": "Temario 2.2", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "En la estructura interna del transductor, ¿qué función cumple el bloque amortiguador (backing material) y qué propiedad diagnóstica optimiza?", "options": [{"letter": "A", "text": "Aumenta el número de ciclos del pulso para incrementar la potencia y penetración."}, {"letter": "B", "text": "Absorbe las vibraciones residuales del cristal para crear pulsos ultracortos, optimizando la resolución axial."}, {"letter": "C", "text": "Aisla térmicamente la sonda para permitir su esterilización en autoclave a vapor."}, {"letter": "D", "text": "Desvía electrónicamente el haz para simular una huella sectorial."}], "ans": "B", "just": "Acorta pulsos / optimiza resolución axial"}, {"id": 13, "ref": "Temario 2.2", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "La capa de adaptación o acoplamiento (matching layer) tiene como propósito técnico primordial:", "options": [{"letter": "A", "text": "Fijar mecánicamente los cristales al cable de conexión coaxial."}, {"letter": "B", "text": "Poseer una impedancia acústica intermedia entre el cristal PZT y el tejido blando para reducir la reflexión interna inicial."}, {"letter": "C", "text": "Permitir la desinfección química de alto nivel sin desgastar la goma protectora."}, {"letter": "D", "text": "Eliminar la necesidad de utilizar potenciómetros TGC en la consola."}], "ans": "B", "just": "Impedancia intermedia / reduce reflexión interna"}, {"id": 14, "ref": "Temario 2.3", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Para el estudio de partes pequeñas (tiroides, mama, testículo) y vasos carotídeos, ¿cuál es el transductor de elección según la tabla del temario?", "options": [{"letter": "A", "text": "Convexo de 2.5 a 5.0 MHz con haz en abanico divergente."}, {"letter": "B", "text": "Sectorial (Phased Array) de 2.0 a 3.5 MHz."}, {"letter": "C", "text": "Lineal de 5.0 a 12.0 MHz, con formato rectangular y haz de líneas paralelas."}, {"letter": "D", "text": "Endocavitario de 5.0 a 9.0 MHz con apertura de 180°."}], "ans": "C", "just": "Lineal 5-12 MHz / formato rectangular plano"}, {"id": 15, "ref": "Temario 2.3", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Qué características técnicas definen al transductor Sectorial (Phased Array) y justifican su uso en accesos intercostales cardíacos?", "options": [{"letter": "A", "text": "Huella rectangular muy ancha que abarca todo el tórax anterior."}, {"letter": "B", "text": "Huella de contacto milimétrica que genera un abanico triangular desde un punto estrecho mediante retardo de fase electrónico."}, {"letter": "C", "text": "Frecuencia fija de 18 MHz que atraviesa el hueso costal sin atenuación."}, {"letter": "D", "text": "Operación exclusiva en modo Doppler continuo sin imagen bidimensional."}], "ans": "B", "just": "Huella milimétrica / haz triangular en abanico"}, {"id": 16, "ref": "Temario 2.4", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Si el operador incrementa de forma excesiva la Ganancia Global (Overall 2D Gain), ¿qué artefacto se produce en la pantalla según el temario?", "options": [{"letter": "A", "text": "Sombra acústica lateral por refracción angular en los vasos."}, {"letter": "B", "text": "Pérdida de señal en campo cercano por saturación térmica."}, {"letter": "C", "text": "Degradación del contraste y aparición de ruido electrónico de fondo con aspecto de 'tormenta de nieve'."}, {"letter": "D", "text": "Aparición de imágenes en espejo por detrás del diafragma."}], "ans": "C", "just": "Ruido electrónico / tormenta de nieve"}, {"id": 17, "ref": "Temario 2.4", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Para corregir una ecografía hepática donde el parénquima superficial está blanco (sobreexpuesto) y el campo profundo oscuro, el temario indica:", "options": [{"letter": "A", "text": "Aumentar la Ganancia Global al máximo disponible."}, {"letter": "B", "text": "Regular la curva TGC, reduciendo los deslizadores superiores y aumentando los deslizadores inferiores."}, {"letter": "C", "text": "Sustituir de inmediato el transductor convexo por uno lineal de 12 MHz."}, {"letter": "D", "text": "Presionar el botón Freeze y realizar una medición con calipers."}], "ans": "B", "just": "TGC / sliders superiores bajos e inferiores altos"}, {"id": 18, "ref": "Temario 2.4", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Dónde debe colocarse el marcador de Foco Dinámico (Focus) para maximizar la resolución lateral sobre una estructura patológica en pantalla?", "options": [{"letter": "A", "text": "En la superficie de la piel (a 0 cm) para concentrar el haz al salir de la huella."}, {"letter": "B", "text": "En el fondo de la pantalla (a 20 cm) para evitar la atenuación."}, {"letter": "C", "text": "Exactamente a la altura o inmediatamente por debajo de la estructura patológica a evaluar."}, {"letter": "D", "text": "En cualquier nivel, ya que el foco no modifica el ancho del haz."}], "ans": "C", "just": "A la altura o debajo / estrecha haz acústico"}, {"id": 19, "ref": "Temario 2.5", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Dentro de los 5 micromovimientos del operador, ¿en qué consiste la 'Compresión' y cuál es su aplicación diagnóstica determinante?", "options": [{"letter": "A", "text": "Giro de 90° sobre el eje vertical para cambiar de corte anatómico."}, {"letter": "B", "text": "Angulación de polo a polo manteniendo la huella inmóvil."}, {"letter": "C", "text": "Presión controlada perpendicular para desplazar gas y comprobar la coaptación venosa en descarte de Trombosis Venosa Profunda (TVP)."}, {"letter": "D", "text": "Desplazamiento horizontal continuo a lo largo del trayecto muscular."}], "ans": "C", "just": "Presión controlada / coaptación venosa en TVP"}, {"id": 20, "ref": "Temario 2.6", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Respecto a la bioseguridad y el mantenimiento, ¿qué protocolo es OBLIGATORIO para sondas endocavitarias y qué método está prohibido?", "options": [{"letter": "A", "text": "Es obligatoria la Desinfección de Alto Nivel (DAN) con agentes químicos validados; está prohibido el autoclave (el calor destruye los cristales PZT)."}, {"letter": "B", "text": "Es obligatorio el lavado exclusivo con alcohol al 95%; está prohibido retirar la funda protectora."}, {"letter": "C", "text": "Es obligatorio el uso de autoclave a vapor a 134 °C; está prohibido el gel acoplador."}, {"letter": "D", "text": "Es obligatoria la inmersión completa del conector eléctrico en agua estéril."}], "ans": "A", "just": "Desinfección Alto Nivel (DAN) / Prohibido autoclave"}];
+    // =========================================================================
+    // ENLACE DIRECTO AL GOOGLE SHEET DEL DOCENTE
+    // =========================================================================
+    const GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycby3FeXVxsKy0LWufw7NQTOBzStJ4_UF0t0HEFLr5mtW7HMdbZjfp_M6y6Ufnk0fkukb/exec";
+
+    // --- 50 QUESTIONS MASTER DATA ---
+    const rawQuestions = [{"id": 1, "ref": "Temario 1.1", "category": "Módulo I: Biofísica del Ultrasonido", "text": "Respecto a la naturaleza del ultrasonido médico, ¿cómo se define textualmente su mecanismo de propagación física y qué velocidad media constante asume el equipo en tejidos blandos?", "options": [{"letter": "A", "text": "Onda electromagnética transversal que viaja a la velocidad de la luz (300,000 km/s)."}, {"letter": "B", "text": "Onda mecánica longitudinal con ciclos alternos de compresión y rarefacción, calibrada a c = 1540 m/s (1.54 mm/µs)."}, {"letter": "C", "text": "Radiación corpuscular ionizante que se propaga a 330 m/s a través del vacío."}, {"letter": "D", "text": "Onda de torsión superficial que no requiere soporte material elástico para desplazarse."}], "ans": "B", "just": "Mecánica longitudinal / c = 1540 m/s"}, {"id": 2, "ref": "Temario 1.1", "category": "Módulo I: Biofísica del Ultrasonido", "text": "En el espectro acústico universal, ¿a partir de qué frecuencia física se clasifica una onda sonora como 'Ultrasonido' y cuál es el rango diagnóstico empleado en ecografía médica?", "options": [{"letter": "A", "text": "Mayor a 20 Hz, con rango diagnóstico de 50 a 100 Hz."}, {"letter": "B", "text": "Mayor a 20,000 Hz (20 kHz), con rango diagnóstico médico habitual de 2.0 a 15.0 MHz."}, {"letter": "C", "text": "Menor a 20 Hz, con rango diagnóstico de 1 a 5 kHz."}, {"letter": "D", "text": "Mayor a 1 GHz, con rango diagnóstico de 20 a 50 GHz."}], "ans": "B", "just": "> 20 kHz / rango 2 a 15 MHz"}, {"id": 3, "ref": "Temario 1.1", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Cuáles son las dos propiedades físicas del medio material que determinan de forma exclusiva la velocidad de propagación (c) del haz de ultrasonido?", "options": [{"letter": "A", "text": "El voltaje aplicado al ecógrafo y la temperatura de la consola."}, {"letter": "B", "text": "La densidad (ρ) y la rigidez o módulo de compresibilidad (K) del tejido insonado."}, {"letter": "C", "text": "La ganancia en decibeles y la profundidad ajustada en pantalla."}, {"letter": "D", "text": "El ángulo de insonación Doppler y el espesor del gel acústico."}], "ans": "B", "just": "Densidad y rigidez tisular"}, {"id": 4, "ref": "Temario 1.1", "category": "Módulo I: Biofísica del Ultrasonido", "text": "Si comparamos la velocidad de propagación del ultrasonido en los diferentes tejidos, ¿en cuál de las siguientes estructuras viaja a mayor velocidad debido a su elevada rigidez?", "options": [{"letter": "A", "text": "Aire alveolar pulmonar (c ≈ 330 m/s)."}, {"letter": "B", "text": "Grasa subcutánea (c ≈ 1450 m/s)."}, {"letter": "C", "text": "Hueso cortical (c ≈ 4080 m/s)."}, {"letter": "D", "text": "Agua pura a temperatura ambiente (c ≈ 1480 m/s)."}], "ans": "C", "just": "Hueso cortical / c ≈ 4080 m/s"}, {"id": 5, "ref": "Temario 1.1", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Por qué el ultrasonido médico NO puede propagarse a través del vacío?", "options": [{"letter": "A", "text": "Porque carece de partículas materiales capaces de experimentar ciclos mecánicos de compresión y rarefacción."}, {"letter": "B", "text": "Porque el vacío absorbe instantáneamente los fotones de radiación ionizante."}, {"letter": "C", "text": "Porque la temperatura de Curie se anula en ausencia de presión atmosférica."}, {"letter": "D", "text": "Porque el gel acoplador se evapora en condiciones de presión cero."}], "ans": "A", "just": "Onda mecánica requiere medio material"}, {"id": 6, "ref": "Temario 1.2", "category": "Módulo I: Biofísica del Ultrasonido", "text": "El efecto piezoeléctrico inverso, fundamental para la emisión del haz ultrasónico en el paciente, consiste en:", "options": [{"letter": "A", "text": "La deformación del cristal por el eco de retorno para generar señales de microvoltaje."}, {"letter": "B", "text": "La aplicación de un pulso de voltaje eléctrico alterno sobre el cristal PZT que lo hace vibrar mecánicamente y emitir sonido."}, {"letter": "C", "text": "La elevación de la temperatura por encima del límite de Curie durante el escaneo."}, {"letter": "D", "text": "La orientación dipolar de los hematíes circulantes mediante radiofrecuencia."}], "ans": "B", "just": "Voltaje eléctrico produce vibración acústica"}, {"id": 7, "ref": "Temario 1.2", "category": "Módulo I: Biofísica del Ultrasonido", "text": "El efecto piezoeléctrico directo, responsable de la recepción de los ecos diagnósticos, se define como:", "options": [{"letter": "A", "text": "La deformación mecánica que sufre el cristal PZT al recibir los ecos de retorno, generando una señal de microvoltaje proporcional para la imagen."}, {"letter": "B", "text": "La emisión continua de ondas de calor hacia el parénquima profundo."}, {"letter": "C", "text": "El enfriamiento instantáneo de los potenciómetros TGC al tocar la piel."}, {"letter": "D", "text": "La refracción del haz sonoro en interfases óseas corticales."}], "ans": "A", "just": "Presión mecánica genera microvoltaje"}, {"id": 8, "ref": "Temario 1.2", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Cuál es el material cerámico sintético empleado industrialmente en la fabricación de los cristales piezoeléctricos y qué condición crítica de bioseguridad térmica debe respetarse?", "options": [{"letter": "A", "text": "Sulfato de Bario purificado a temperatura ambiente."}, {"letter": "B", "text": "Cuarzo natural polarizado a 100 °C de temperatura constante."}, {"letter": "C", "text": "Titanato Zirconato de Plomo (PZT), el cual se despolariza y destruye si supera la temperatura de Curie."}, {"letter": "D", "text": "Tungsteno sinterizado resistente a la despolarización magnética."}], "ans": "C", "just": "PZT / despolariza sobre temperatura de Curie"}, {"id": 9, "ref": "Temario 1.2", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Qué ocurre de forma irreversible si un transductor ecográfico se introduce en un autoclave a vapor a 134 °C para esterilizarlo?", "options": [{"letter": "A", "text": "Se duplica la frecuencia fundamental de los cristales PZT."}, {"letter": "B", "text": "Los cristales PZT superan la temperatura de Curie, perdiendo su polarización dipolar y quedando inutilizados permanentemente."}, {"letter": "C", "text": "Mejora la impedancia acústica de la capa de adaptación frontal."}, {"letter": "D", "text": "El transductor lineal se transforma automáticamente en sectorial."}], "ans": "B", "just": "Calor supera Curie / destruye cristales"}, {"id": 10, "ref": "Temario 1.3", "category": "Módulo I: Biofísica del Ultrasonido", "text": "De acuerdo con la fórmula de impedancia acústica (Z = ρ · c), ¿cuál es su unidad de medida oficial en el Sistema Internacional?", "options": [{"letter": "A", "text": "Decibelio (dB)."}, {"letter": "B", "text": "Rayl (kg / m²·s)."}, {"letter": "C", "text": "Hertz (Hz)."}, {"letter": "D", "text": "Megaelectronvoltio (MeV)."}], "ans": "B", "just": "Unidad de impedancia: Rayl"}, {"id": 11, "ref": "Temario 1.3", "category": "Módulo I: Biofísica del Ultrasonido", "text": "De acuerdo con la fórmula de impedancia acústica (Z = ρ · c, en Rayls), ¿qué ocurre en una interfase con disparidad extrema (ΔZ grande) como tejido blando / hueso o tejido blando / aire?", "options": [{"letter": "A", "text": "Se transmite el 100% de la energía hacia las estructuras anatómicas profundas."}, {"letter": "B", "text": "Ocurre dispersión caótica omnidireccional sin ningún eco de retorno."}, {"letter": "C", "text": "Se produce una reflexión cercana al 99.9% del haz en la superficie, impidiendo la penetración y generando sombra acústica."}, {"letter": "D", "text": "La longitud de onda aumenta hasta volverse audible para el tecnólogo."}], "ans": "C", "just": "ΔZ extrema / reflexión cercana al 99.9%"}, {"id": 12, "ref": "Temario 1.3", "category": "Módulo I: Biofísica del Ultrasonido", "text": "Cuando el haz acústico encuentra una interfase con diferencia de impedancia mínima (ΔZ pequeña, como músculo / grasa o parénquima contiguo):", "options": [{"letter": "A", "text": "La gran mayoría de la onda se transmite en profundidad y se refleja una pequeña fracción de ecos que permite visualizar la textura orgánica."}, {"letter": "B", "text": "El haz se refleja en un 100% produciendo una sombra acústica posterior negra."}, {"letter": "C", "text": "Se produce reverberación crítica con artefacto de cola de cometa."}, {"letter": "D", "text": "La velocidad del haz se duplica instantáneamente."}], "ans": "A", "just": "ΔZ mínima / alta transmisión y ecos útiles"}, {"id": 13, "ref": "Temario 1.3", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Cuál es la función obligatoria del gel de acoplamiento acústico según la regla clínica de oro del temario?", "options": [{"letter": "A", "text": "Desinfectar la epidermis y eliminar la flora bacteriana antes de la punción."}, {"letter": "B", "text": "Poseer una impedancia idéntica a la piel (Z ≈ 1.5 × 10⁶ Rayls) para expulsar el aire que reflejaría el 99.9% del haz."}, {"letter": "C", "text": "Enfriar la superficie de contacto para poder incrementar la potencia acústica al doble."}, {"letter": "D", "text": "Actuar como catalizador químico de las ondas mecánicas reflejadas."}], "ans": "B", "just": "Elimina aire / iguala impedancia acústica"}, {"id": 14, "ref": "Temario 1.3", "category": "Módulo I: Biofísica del Ultrasonido", "text": "Si se intenta colocar el transductor directamente sobre la piel seca de un paciente sin gel de acoplamiento:", "options": [{"letter": "A", "text": "La imagen se ve nítida pero únicamente en escala de grises invertida."}, {"letter": "B", "text": "El 99.9% de los fotones acústicos se reflejan en la interfase de aire en la superficie cutánea antes de penetrar un solo milímetro."}, {"letter": "C", "text": "Aumenta la penetración en campo profundo por falta de resistencia hídrica."}, {"letter": "D", "text": "El transductor emite una alarma de sobrevoltaje en la consola."}], "ans": "B", "just": "Sin gel / reflexión del 99.9% en superficie"}, {"id": 15, "ref": "Temario 1.4", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Cómo se define textualmente el fenómeno de 'Atenuación Acústica' en el temario?", "options": [{"letter": "A", "text": "El aumento de la amplitud del eco al chocar contra estructuras líquidas anecoicas."}, {"letter": "B", "text": "La pérdida progresiva de potencia, intensidad y amplitud que sufre la onda de ultrasonido a medida que viaja por el tejido."}, {"letter": "C", "text": "La velocidad constante asumida de 1540 m/s en el parénquima hepático."}, {"letter": "D", "text": "El tiempo de congelado de la imagen mediante el botón Freeze."}], "ans": "B", "just": "Pérdida progresiva de intensidad y potencia"}, {"id": 16, "ref": "Temario 1.4", "category": "Módulo I: Biofísica del Ultrasonido", "text": "De los cuatro fenómenos de atenuación, ¿cuál representa el componente principal (más del 80%) de la pérdida de energía del haz sonoro en el cuerpo?", "options": [{"letter": "A", "text": "Refracción por Ley de Snell en bordes anatómicos."}, {"letter": "B", "text": "Absorción, consistente en la conversión de energía acústica en calor tisular."}, {"letter": "C", "text": "Reflexión especular en el diafragma y la cápsula hepática."}, {"letter": "D", "text": "Dispersión omnidireccional en el parénquima de órganos sólidos."}], "ans": "B", "just": "Absorción / conversión a calor tisular"}, {"id": 17, "ref": "Temario 1.4", "category": "Módulo I: Biofísica del Ultrasonido", "text": "El ecopatrón granular homogéneo de grano fino que exhibe el parénquima de órganos como el hígado o el bazo se produce primariamente por:", "options": [{"letter": "A", "text": "Refracción crítica en las venas suprahepáticas."}, {"letter": "B", "text": "Reflexión especular en ángulo recto sobre la cápsula de Glisson."}, {"letter": "C", "text": "Dispersión acústica (scattering) en interfases microscópicas menores a la longitud de onda."}, {"letter": "D", "text": "Sobreexposición de ganancia global en la consola."}], "ans": "C", "just": "Dispersión (scattering) en interfases celulares"}, {"id": 18, "ref": "Temario 1.4", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Qué características debe tener un límite anatómico para que se produzca una 'Reflexión Especular' de alta intensidad?", "options": [{"letter": "A", "text": "Ser una superficie grande, lisa y regular respecto a la longitud de onda, incidiendo el haz preferentemente a 90°."}, {"letter": "B", "text": "Ser una partícula microscópica más pequeña que la longitud de onda en suspensión líquida."}, {"letter": "C", "text": "Tener una diferencia de impedancia exactamente igual a cero."}, {"letter": "D", "text": "Estar localizada a más de 25 cm de profundidad corporal."}], "ans": "A", "just": "Superficie grande, lisa y a 90 grados"}, {"id": 19, "ref": "Temario 1.4", "category": "Módulo I: Biofísica del Ultrasonido", "text": "Según la Ley de Snell, ¿cuáles son los dos requisitos físicos indispensables para que se produzca el fenómeno de refracción acústica?", "options": [{"letter": "A", "text": "Incidencia perpendicular exacta (90°) e idéntica velocidad acústica entre ambos medios."}, {"letter": "B", "text": "Insonación sobre colecciones líquidas puras y densas sin ecos."}, {"letter": "C", "text": "Incidencia oblicua (no perpendicular) e interfase entre medios con diferente velocidad de propagación."}, {"letter": "D", "text": "Utilizar exclusivamente transductores convexos de baja frecuencia."}], "ans": "C", "just": "Incidencia oblicua + diferente velocidad tisular"}, {"id": 20, "ref": "Temario 1.5", "category": "Módulo I: Biofísica del Ultrasonido", "text": "Considerando la ecuación biofísica λ = c / f, ¿qué compromiso asume el operador al seleccionar una frecuencia elevada (7.5 a 15 MHz)?", "options": [{"letter": "A", "text": "Mayor penetración profunda sacrificando la resolución espacial en superficie."}, {"letter": "B", "text": "Longitud de onda corta, excelente resolución de detalle fino, pero alta tasa de atenuación que limita la penetración a pocos centímetros."}, {"letter": "C", "text": "Duplicación del ancho del haz en campo lejano con pérdida de resolución axial."}, {"letter": "D", "text": "Aumento de la velocidad de propagación en tejidos blandos por encima de 2000 m/s."}], "ans": "B", "just": "Alta resolución / menor penetración por atenuación"}, {"id": 21, "ref": "Temario 1.5", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Por qué motivo técnico en ultrasonido diagnóstico abdominal profundo (ej. hígado en paciente obeso a 18 cm) se debe seleccionar una frecuencia baja (2.0 a 3.5 MHz)?", "options": [{"letter": "A", "text": "Porque su longitud de onda más larga atenúa menos energía por centímetro, logrando la penetración acústica necesaria."}, {"letter": "B", "text": "Porque las bajas frecuencias mejoran la resolución axial a valores menores de 0.1 mm."}, {"letter": "C", "text": "Porque evita la necesidad de utilizar gel acoplador en el abdomen."}, {"letter": "D", "text": "Porque reduce el calentamiento de la consola del ecógrafo."}], "ans": "A", "just": "Baja frecuencia / menor atenuación / penetra más"}, {"id": 22, "ref": "Temario 1.5", "category": "Módulo I: Biofísica del Ultrasonido", "text": "La resolución axial (capacidad de diferenciar dos reflectores paralelos alineados a lo largo del haz) depende matemáticamente de:", "options": [{"letter": "A", "text": "La mitad de la Longitud Espacial del Pulso (SPL / 2)."}, {"letter": "B", "text": "El ancho del haz acústico en la zona de foco."}, {"letter": "C", "text": "La ganancia en decibeles del amplificador principal."}, {"letter": "D", "text": "El ángulo de curvatura física de la sonda convexa."}], "ans": "A", "just": "Mitad de longitud espacial del pulso (SPL / 2)"}, {"id": 23, "ref": "Temario 1.5", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Cómo se define la resolución lateral en ecografía diagnóstica y de qué factor biofísico del haz depende principalmente?", "options": [{"letter": "A", "text": "Capacidad de distinguir reflectores a lo largo del eje del haz, dependiente del backing material."}, {"letter": "B", "text": "Capacidad de diferenciar dos estructuras situadas lado a lado (perpendiculares al haz), dependiente del ancho del haz y la focalización."}, {"letter": "C", "text": "Tasa de refresco de cuadros por segundo generada por el Scan Converter."}, {"letter": "D", "text": "Tiempo requerido por la onda sonora para cruzar 1 cm de grasa."}], "ans": "B", "just": "Perpendicular al haz / ancho del haz y foco"}, {"id": 24, "ref": "Temario 1.5", "category": "Módulo I: Biofísica del Ultrasonido", "text": "Para optimizar simultáneamente la resolución axial y la resolución lateral en una exploración de partes blandas superficiales a 2 cm de profundidad:", "options": [{"letter": "A", "text": "Se utiliza baja frecuencia (2.5 MHz) y se sitúa el foco a 15 cm."}, {"letter": "B", "text": "Se emplea alta frecuencia (10 a 12 MHz) con pulsos cortos y se ubica el foco exactamente a 2 cm."}, {"letter": "C", "text": "Se apagan los potenciómetros TGC y se eleva la ganancia al 100%."}, {"letter": "D", "text": "Se cambia a transductor sectorial descalibrando el reloj de pulsos."}], "ans": "B", "just": "Alta frecuencia + foco a la profundidad diana"}, {"id": 25, "ref": "Temario 1.5", "category": "Módulo I: Biofísica del Ultrasonido", "text": "¿Qué ocurre con la Longitud Espacial del Pulso (SPL) si se aumenta la amortiguación del transductor reduciendo los ciclos por pulso?", "options": [{"letter": "A", "text": "El SPL disminuye, lo que produce una mejora directa en la resolución axial."}, {"letter": "B", "text": "El SPL aumenta, degradando la capacidad de diferenciar estructuras milimétricas."}, {"letter": "C", "text": "La velocidad del sonido se eleva a más de 3000 m/s."}, {"letter": "D", "text": "El haz acústico se vuelve puramente continuo sin pulsos."}], "ans": "A", "just": "Menor SPL / mejora resolución axial"}, {"id": 26, "ref": "Temario 2.1", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Qué bloque del ecógrafo es el encargado directo de controlar la potencia acústica de salida (Acoustic Power) y la Frecuencia de Repetición de Pulsos (PRF)?", "options": [{"letter": "A", "text": "El conversor digital de barrido (Scan Converter)."}, {"letter": "B", "text": "El generador de pulsos (Pulser / Transmisor)."}, {"letter": "C", "text": "El banco vertical de potenciómetros TGC."}, {"letter": "D", "text": "El monitor con memoria de cine loop."}], "ans": "B", "just": "Pulser / controla PRF y potencia acústica"}, {"id": 27, "ref": "Temario 2.1", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Dentro de la cadena de procesamiento del Receptor (procesador de señal), ¿cuál es la función de la 'Compresión' del rango dinámico?", "options": [{"letter": "A", "text": "Ajustar la escala de grises reduciendo la disparidad entre las señales eléctricas más intensas y las más débiles para que el ojo humano las distinga."}, {"letter": "B", "text": "Presionar físicamente los cables coaxiales para evitar pérdidas de energía."}, {"letter": "C", "text": "Aumentar la temperatura de los cristales piezoeléctricos."}, {"letter": "D", "text": "Eliminar por completo todos los ecos provenientes del campo cercano."}], "ans": "A", "just": "Compresión / ajusta escala de grises y contraste"}, {"id": 28, "ref": "Temario 2.1", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "El componente encargado de transformar la información de ecos polares en una matriz de píxeles rectangulares para ser mostrada en el monitor en tiempo real se denomina:", "options": [{"letter": "A", "text": "Generador de impulsos acústicos."}, {"letter": "B", "text": "Conversor de barrido (Scan Converter)."}, {"letter": "C", "text": "Capa de amortiguación trasera."}, {"letter": "D", "text": "Transformador de impedancia de Curie."}], "ans": "B", "just": "Scan Converter / digitaliza a pantalla"}, {"id": 29, "ref": "Temario 2.2", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Cómo se relaciona el espesor físico del cristal piezoeléctrico PZT con la frecuencia de resonancia fundamental emitida por la sonda?", "options": [{"letter": "A", "text": "El espesor del cristal es exactamente igual a la mitad de la longitud de onda (espesor = λ / 2); a cristal más delgado, mayor frecuencia."}, {"letter": "B", "text": "A mayor espesor del cristal, mayor es la frecuencia fundamental generada."}, {"letter": "C", "text": "El espesor del cristal no influye en la frecuencia, solo en el voltaje de salida."}, {"letter": "D", "text": "El espesor debe ser 10 veces mayor que la longitud de onda tisular."}], "ans": "A", "just": "Espesor = λ / 2 / cristal delgado = alta frecuencia"}, {"id": 20, "ref": "Temario 2.2", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "En la estructura interna del transductor, ¿qué función cumple el bloque amortiguador (backing material) y qué propiedad diagnóstica optimiza?", "options": [{"letter": "A", "text": "Aumenta el número de ciclos del pulso para incrementar la potencia y penetración."}, {"letter": "B", "text": "Absorbe las vibraciones residuales del cristal para crear pulsos ultracortos, optimizando la resolución axial."}, {"letter": "C", "text": "Aisla térmicamente la sonda para permitir su esterilización en autoclave a vapor."}, {"letter": "D", "text": "Desvía electrónicamente el haz para simular una huella sectorial."}], "ans": "B", "just": "Acorta pulsos / optimiza resolución axial"}, {"id": 31, "ref": "Temario 2.2", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "La capa de adaptación o acoplamiento (matching layer) tiene como propósito técnico primordial:", "options": [{"letter": "A", "text": "Fijar mecánicamente los cristales al cable de conexión coaxial."}, {"letter": "B", "text": "Poseer una impedancia acústica intermedia entre el cristal PZT y el tejido blando para reducir la reflexión interna inicial."}, {"letter": "C", "text": "Permitir la desinfección química de alto nivel sin desgastar la goma protectora."}, {"letter": "D", "text": "Eliminar la necesidad de utilizar potenciómetros TGC en la consola."}], "ans": "B", "just": "Impedancia intermedia / reduce reflexión interna"}, {"id": 32, "ref": "Temario 2.2", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Cuál es la función del blindaje electromagnético incorporado en la carcasa del transductor ecográfico?", "options": [{"letter": "A", "text": "Impedir que señales externas de radiofrecuencia (ruido eléctrico) contaminen la imagen y proteger al paciente de descargas."}, {"letter": "B", "text": "Enfocar magnéticamente los glóbulos rojos durante la exploración Doppler."}, {"letter": "C", "text": "Evitar que el transductor pierda su peso y ergonomía en la mano del tecnólogo."}, {"letter": "D", "text": "Aumentar el número de armónicos en la ecografía de contraste."}], "ans": "A", "just": "Aislamiento eléctrico y bloqueo de radiofrecuencia"}, {"id": 33, "ref": "Temario 2.3", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Para el estudio de partes pequeñas (tiroides, mama, testículo) y vasos carotídeos, ¿cuál es el transductor de elección según la tabla del temario?", "options": [{"letter": "A", "text": "Convexo de 2.5 a 5.0 MHz con haz en abanico divergente."}, {"letter": "B", "text": "Sectorial (Phased Array) de 2.0 a 3.5 MHz."}, {"letter": "C", "text": "Lineal de 5.0 a 12.0 MHz, con formato rectangular y haz de líneas paralelas."}, {"letter": "D", "text": "Endocavitario de 5.0 a 9.0 MHz con apertura de 180°."}], "ans": "C", "just": "Lineal 5-12 MHz / formato rectangular plano"}, {"id": 34, "ref": "Temario 2.3", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Qué geometría de imagen produce un transductor Lineal y cómo se disponen sus líneas de insonación en el espacio?", "options": [{"letter": "A", "text": "Formato rectangular puro, originado por líneas de haz paralelas equidistantes."}, {"letter": "B", "text": "Formato de pastel triangular con vértice en un punto estrecho."}, {"letter": "C", "text": "Formato trapezoidal convexo con base ancha divergente."}, {"letter": "D", "text": "Formato circular de 360 grados sin orientación definida."}], "ans": "A", "just": "Rectangular / líneas paralelas"}, {"id": 35, "ref": "Temario 2.3", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "El transductor Convexo o Curvilíneo (2.5 a 5.0 MHz) es el estándar para exploraciones abdominales y obstétricas porque:", "options": [{"letter": "A", "text": "Su superficie curva genera un haz en abanico divergente ancho que brinda amplia cobertura anatómica y adecuada penetración profunda."}, {"letter": "B", "text": "Posee la huella más pequeña del mercado para caber en el espacio intercostal."}, {"letter": "C", "text": "Permite resolver estructuras de menos de 0.1 mm en la dermis superficial."}, {"letter": "D", "text": "No requiere calibración de foco dinámico."}], "ans": "A", "just": "Abanico ancho curvo / penetración abdominal"}, {"id": 36, "ref": "Temario 2.3", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Qué características técnicas definen al transductor Sectorial (Phased Array) y justifican su uso en accesos intercostales cardíacos?", "options": [{"letter": "A", "text": "Huella rectangular muy ancha que abarca todo el tórax anterior."}, {"letter": "B", "text": "Huella de contacto milimétrica que genera un abanico triangular desde un punto estrecho mediante retardo de fase electrónico."}, {"letter": "C", "text": "Frecuencia fija de 18 MHz que atraviesa el hueso costal sin atenuación."}, {"letter": "D", "text": "Operación exclusiva en modo Doppler continuo sin imagen bidimensional."}], "ans": "B", "just": "Huella milimétrica / haz triangular en abanico"}, {"id": 37, "ref": "Temario 2.3", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Cómo logra una matriz Phased Array (sectorial) deflexionar y enfocar el haz acústico sin mover físicamente sus cristales?", "options": [{"letter": "A", "text": "Mediante la rotación manual de un motor interno dentro de la carcasa."}, {"letter": "B", "text": "Aplicando retardos de fase temporales nanométricos en la excitación eléctrica de cada elemento del array."}, {"letter": "C", "text": "Variando la densidad del gel acoplador durante la emisión."}, {"letter": "D", "text": "Cambiando la polaridad de la batería del ecógrafo."}], "ans": "B", "just": "Retardo de fase electrónico (time delays)"}, {"id": 38, "ref": "Temario 2.3", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "El transductor Endocavitario (5.0 a 9.0 MHz) se caracteriza clínicamente por:", "options": [{"letter": "A", "text": "Un vástago alargado con pequeña curvatura distal que ofrece un campo de visión amplio (150° a 180°) de máxima proximidad en estudios transvaginales y transrectales."}, {"letter": "B", "text": "Estar diseñado exclusivamente para rastreos pulmonares transtorácicos."}, {"letter": "C", "text": "Funcionar con cristales de sulfato de bario de alta temperatura."}, {"letter": "D", "text": "Tener una penetración de más de 30 cm en el retroperitoneo."}], "ans": "A", "just": "Máxima proximidad / campo amplio 150-180°"}, {"id": 39, "ref": "Temario 2.4", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "La Ganancia Global (Overall 2D Gain) se controla mediante una perilla rotatoria y su función técnica principal es:", "options": [{"letter": "A", "text": "Modificar selectivamente el brillo únicamente en el tercio medio de la pantalla."}, {"letter": "B", "text": "Amplificar de forma simétrica, lineal y constante la señal eléctrica de todos los ecos recibidos en la pantalla."}, {"letter": "C", "text": "Aumentar la potencia acústica de radiación emitida hacia el paciente."}, {"letter": "D", "text": "Alinear los cristales piezoeléctricos con el haz Doppler."}], "ans": "B", "just": "Amplificación simétrica de todos los ecos"}, {"id": 40, "ref": "Temario 2.4", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Si el operador incrementa de forma excesiva la Ganancia Global (Overall 2D Gain), ¿qué artefacto se produce en la pantalla según el temario?", "options": [{"letter": "A", "text": "Sombra acústica lateral por refracción angular en los vasos."}, {"letter": "B", "text": "Pérdida de señal en campo cercano por saturación térmica."}, {"letter": "C", "text": "Degradación del contraste y aparición de ruido electrónico de fondo con aspecto de 'tormenta de nieve'."}, {"letter": "D", "text": "Aparición de imágenes en espejo por detrás del diafragma."}], "ans": "C", "just": "Ruido electrónico / tormenta de nieve"}, {"id": 41, "ref": "Temario 2.4", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Para qué sirve el banco vertical de potenciómetros deslizantes TGC (Time Gain Compensation)?", "options": [{"letter": "A", "text": "Para ecualizar selectivamente el brillo en diferentes zonas de profundidad (campo cercano, medio y lejano), contrarrestando la atenuación del sonido."}, {"letter": "B", "text": "Para alternar entre transductor lineal y transductor endocavitario."}, {"letter": "C", "text": "Para activar el modo Doppler color en tiempo real."}, {"letter": "D", "text": "Para seleccionar el idioma de los menús en la consola."}], "ans": "A", "just": "Compensación zonal de atenuación por profundidad"}, {"id": 42, "ref": "Temario 2.4", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Para corregir una ecografía hepática donde el parénquima superficial está blanco (sobreexpuesto) y el campo profundo oscuro, el temario indica:", "options": [{"letter": "A", "text": "Aumentar la Ganancia Global al máximo disponible."}, {"letter": "B", "text": "Regular la curva TGC, reduciendo los deslizadores superiores y aumentando los deslizadores inferiores."}, {"letter": "C", "text": "Sustituir de inmediato el transductor convexo por uno lineal de 12 MHz."}, {"letter": "D", "text": "Presionar el botón Freeze y realizar una medición con calipers."}], "ans": "B", "just": "TGC / sliders superiores bajos e inferiores altos"}, {"id": 43, "ref": "Temario 2.4", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Dónde debe colocarse el marcador de Foco Dinámico (Focus) para maximizar la resolución lateral sobre una estructura patológica en pantalla?", "options": [{"letter": "A", "text": "En la superficie de la piel (a 0 cm) para concentrar el haz al salir de la huella."}, {"letter": "B", "text": "En el fondo de la pantalla (a 20 cm) para evitar la atenuación."}, {"letter": "C", "text": "Exactamente a la altura o inmediatamente por debajo de la estructura patológica a evaluar."}, {"letter": "D", "text": "En cualquier nivel, ya que el foco no modifica el ancho del haz."}], "ans": "C", "just": "A la altura o debajo / estrecha haz acústico"}, {"id": 44, "ref": "Temario 2.4", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Cuál es la regla clínica recomendada en el temario para el ajuste del control de Profundidad (Depth)?", "options": [{"letter": "A", "text": "Colocar siempre la máxima profundidad que permita el equipo (30 cm)."}, {"letter": "B", "text": "Ajustar la escala de modo que la estructura anatómica diana ocupe el 70% al 80% de la pantalla central, manteniendo visibles los límites posteriores de referencia."}, {"letter": "C", "text": "Recortar el campo visual de modo que solo se observe el lumen del vaso sin tejido circundante."}, {"letter": "D", "text": "Mantener la profundidad fija a 5 cm en cualquier estudio clínico."}], "ans": "B", "just": "Estructura ocupa 70-80% de pantalla central"}, {"id": 45, "ref": "Temario 2.4", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿Qué consecuencia técnica negativa ocurre al escanear con una profundidad (Depth) excesivamente profunda e innecesaria?", "options": [{"letter": "A", "text": "Se reduce drásticamente la tasa de cuadros por segundo (frame rate), perjudicando la resolución temporal."}, {"letter": "B", "text": "Se rompen los cristales PZT por exceso de impedancia."}, {"letter": "C", "text": "Se descalibra la curva TGC en el campo cercano."}, {"letter": "D", "text": "La imagen pasa automáticamente a modo M sin intervención del operador."}], "ans": "A", "just": "Disminuye el frame rate (resolución temporal)"}, {"id": 46, "ref": "Temario 2.4", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "El botón 'Freeze' (congelado), usualmente identificado con un icono de copo de nieve, permite:", "options": [{"letter": "A", "text": "Enfriar los circuitos de la consola mediante ventilación forzada."}, {"letter": "B", "text": "Suspender la transmisión activa en tiempo real para habilitar el cine loop, realizar mediciones biométricas (calipers) y archivar la imagen."}, {"letter": "C", "text": "Borrar permanentemente el disco duro del ecógrafo."}, {"letter": "D", "text": "Invertir la escala Doppler espectral de rojo a azul."}], "ans": "B", "just": "Detiene transmisión / habilita calipers y guardado"}, {"id": 47, "ref": "Temario 2.5", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "¿En qué se diferencia el micromovimiento de 'Deslizar' (Sliding) del micromovimiento de 'Inclinar' (Tilting/Fanning)?", "options": [{"letter": "A", "text": "Deslizar traslada físicamente la huella sobre la piel a otro sitio anatómico; Inclinar mantiene la huella fija en el mismo punto y angula el haz en abanico."}, {"letter": "B", "text": "Deslizar gira la sonda 90 grados; Inclinar presiona verticalmente hacia la columna."}, {"letter": "C", "text": "Deslizar solo se usa con sondas sectoriales; Inclinar solo con sondas lineales."}, {"letter": "D", "text": "Son exactamente el mismo movimiento con nombres sinónimos."}], "ans": "A", "just": "Sliding traslada huella / Tilting angula en abanico"}, {"id": 48, "ref": "Temario 2.5", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Dentro de los 5 micromovimientos del operador, ¿en qué consiste la 'Compresión' y cuál es su aplicación diagnóstica determinante?", "options": [{"letter": "A", "text": "Giro de 90° sobre el eje vertical para cambiar de corte anatómico."}, {"letter": "B", "text": "Angulación de polo a polo manteniendo la huella inmóvil."}, {"letter": "C", "text": "Presión controlada perpendicular para desplazar gas y comprobar la coaptación venosa en descarte de Trombosis Venosa Profunda (TVP)."}, {"letter": "D", "text": "Desplazamiento horizontal continuo a lo largo del trayecto muscular."}], "ans": "C", "just": "Presión controlada / coaptación venosa en TVP"}, {"id": 49, "ref": "Temario 2.6", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Si un transductor sufre una caída accidental contra el piso del consultorio, ¿cuál es el daño interno típico y cómo se manifiesta en la imagen ecográfica?", "options": [{"letter": "A", "text": "Se fracturan elementos cerámicos del cristal PZT, generando líneas o bandas verticales negras ciegas continuas en la imagen."}, {"letter": "B", "text": "Se invierten automáticamente los colores del Doppler color."}, {"letter": "C", "text": "Se descalibra la velocidad de la luz en la consola."}, {"letter": "D", "text": "El monitor se apaga de forma permanente por cortocircuito."}], "ans": "A", "just": "Fractura de cristal PZT / sombras verticales ciegas"}, {"id": 50, "ref": "Temario 2.6", "category": "Módulo II: Arquitectura, Consola y Transductores", "text": "Respecto a la bioseguridad y el mantenimiento, ¿qué protocolo es OBLIGATORIO para sondas endocavitarias y qué método está prohibido?", "options": [{"letter": "A", "text": "Es obligatoria la Desinfección de Alto Nivel (DAN) con agentes químicos validados; está prohibido el autoclave (el calor destruye los cristales PZT)."}, {"letter": "B", "text": "Es obligatorio el lavado exclusivo con alcohol al 95%; está prohibido retirar la funda protectora."}, {"letter": "C", "text": "Es obligatorio el uso de autoclave a vapor a 134 °C; está prohibido el gel acoplador."}, {"letter": "D", "text": "Es obligatoria la inmersión completa del conector eléctrico en agua estéril."}], "ans": "A", "just": "Desinfección Alto Nivel (DAN) / Prohibido autoclave"}];
 
     let studentData = {
       name: "",
@@ -590,7 +603,7 @@
     let infractions = 0;
     const MAX_INFRACTIONS = 3;
     let examFinished = false;
-    let timerSeconds = 120 * 60; // 120 minutos (7200 segundos)
+    let timerSeconds = 120 * 60; // 120 minutos
     let timerInterval = null;
 
     // Elements
@@ -615,16 +628,15 @@
       infractions++;
       
       const badge = document.getElementById("badge-infractions");
-      badge.textContent = `Infracciones: ${infractions} / ${MAX_INFRACTIONS}`;
+      badge.textContent = "Infracciones: " + infractions + " / " + MAX_INFRACTIONS;
       badge.className = infractions >= 2 ? "badge badge-danger" : "badge badge-gold";
 
-      // Hide privacy shield to show warning modal
       privacyShield.classList.remove("active");
 
       if (infractions >= MAX_INFRACTIONS) {
         document.getElementById("modal-title").textContent = "⛔ EXAMEN ANULADO / BLOQUEADO";
         document.getElementById("modal-desc").innerHTML = 
-          `Has alcanzado el límite máximo de <strong>${MAX_INFRACTIONS} infracciones de seguridad</strong> (${reason}).<br><br>El sistema ha bloqueado el examen y lo ha enviado automáticamente.`;
+          "Has alcanzado el límite máximo de <strong>" + MAX_INFRACTIONS + " infracciones de seguridad</strong> (" + reason + ").<br><br>El sistema ha bloqueado el examen y lo ha enviado automáticamente a la planilla del docente.";
         document.getElementById("btn-modal-ack").textContent = "Ver Calificación Final";
         document.getElementById("btn-modal-ack").onclick = () => {
           securityModal.classList.add("hidden");
@@ -633,9 +645,9 @@
         securityModal.classList.remove("hidden");
         finishExam(true);
       } else {
-        document.getElementById("modal-title").textContent = `⚠️ ALERTA DE SEGURIDAD (${infractions}/${MAX_INFRACTIONS})`;
+        document.getElementById("modal-title").textContent = "⚠️ ALERTA DE SEGURIDAD (" + infractions + "/" + MAX_INFRACTIONS + ")";
         document.getElementById("modal-desc").innerHTML = 
-          `Se detectó: <strong>${reason}</strong>.<br><br>Está prohibido cambiar de pestaña, salir de la ventana o realizar capturas de pantalla. Al acumular ${MAX_INFRACTIONS} infracciones, el examen se bloqueará automáticamente.`;
+          "Se detectó: <strong>" + reason + "</strong>.<br><br>Está prohibido cambiar de pestaña, salir de la ventana o realizar capturas de pantalla. Al acumular " + MAX_INFRACTIONS + " infracciones, el examen se bloqueará automáticamente.";
         document.getElementById("btn-modal-ack").textContent = "Regresar Inmediatamente al Examen";
         document.getElementById("btn-modal-ack").onclick = () => {
           securityModal.classList.add("hidden");
@@ -654,12 +666,11 @@
       }
     }
 
-    // Privacy shield on blur / snipping tool activation
     window.addEventListener("blur", () => {
       if (!examFinished && screenExam.style.display !== "none") {
         privacyShield.classList.add("active");
         setTimeout(() => {
-          triggerInfraction("Pérdida de foco del examen (intento de captura o clic fuera)");
+          triggerInfraction("Pérdida de foco del examen (intento de captura o cambio de ventana)");
         }, 300);
       }
     });
@@ -673,7 +684,6 @@
       requestFull();
     });
 
-    // Visibility change
     document.addEventListener("visibilitychange", () => {
       if (document.hidden && !examFinished && screenExam.style.display !== "none") {
         privacyShield.classList.add("active");
@@ -683,7 +693,6 @@
       }
     });
 
-    // Anti-Screenshot Keyboard Interception
     window.addEventListener("keyup", (e) => {
       if (examFinished || screenExam.style.display === "none") return;
       if (e.key === "PrintScreen") {
@@ -696,7 +705,6 @@
     window.addEventListener("keydown", (e) => {
       if (examFinished || screenExam.style.display === "none") return;
 
-      // PrintScreen Key
       if (e.key === "PrintScreen") {
         e.preventDefault();
         clearClipboard();
@@ -705,7 +713,6 @@
         return false;
       }
 
-      // Windows + Shift + S (Snipping Tool) or Alt + PrintScreen
       if ((e.shiftKey && (e.key === "S" || e.key === "s") && (e.metaKey || e.ctrlKey)) || (e.altKey && e.key === "PrintScreen")) {
         e.preventDefault();
         clearClipboard();
@@ -714,7 +721,6 @@
         return false;
       }
 
-      // Mac Screenshot Shortcuts: Cmd + Shift + 3 / 4 / 5
       if (e.metaKey && e.shiftKey && (e.key === "3" || e.key === "4" || e.key === "5")) {
         e.preventDefault();
         clearClipboard();
@@ -723,7 +729,6 @@
         return false;
       }
 
-      // Block Copy/Paste/Inspect/Devtools
       if (
         (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'u' || e.key === 's' || e.key === 'p')) ||
         (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
@@ -745,7 +750,7 @@
 
     function generateWatermarks(name, id) {
       watermarkContainer.innerHTML = "";
-      const text = `${name} • ${id} • PARCIAL RAD 01-028`;
+      const text = name + " • " + id + " • RAD 01-028";
       for (let i = 0; i < 40; i++) {
         const item = document.createElement("div");
         item.className = "watermark-item";
@@ -766,10 +771,10 @@
         return;
       }
 
-      studentData = { name, id, group, startTime: new Date() };
+      studentData = { name: name, id: id, group: group, startTime: new Date() };
       
       document.getElementById("bar-student-name").textContent = name;
-      document.getElementById("bar-student-id").textContent = `($<built-in function id>)`;
+      document.getElementById("bar-student-id").textContent = "(" + id + ")";
 
       generateWatermarks(name, id);
       requestFull();
@@ -795,8 +800,8 @@
         const hours = Math.floor(timerSeconds / 3600);
         const mins = Math.floor((timerSeconds % 3600) / 60);
         const secs = timerSeconds % 60;
-        timerElem.textContent = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        if (timerSeconds <= 600) { // últimos 10 minutos
+        timerElem.textContent = hours.toString().padStart(2, '0') + ":" + mins.toString().padStart(2, '0') + ":" + secs.toString().padStart(2, '0');
+        if (timerSeconds <= 600) {
           timerElem.style.color = "#ff6b6b";
         }
       }, 1000);
@@ -813,10 +818,10 @@
       });
 
       const answeredCount = Object.keys(studentAnswers).length;
-      answeredCounter.textContent = `${answeredCount} de ${rawQuestions.length} respondidas`;
+      answeredCounter.textContent = answeredCount + " de " + rawQuestions.length + " respondidas";
 
       const progressPct = (answeredCount / rawQuestions.length) * 100;
-      document.getElementById("exam-progress-bar").style.width = `${progressPct}%`;
+      document.getElementById("exam-progress-bar").style.width = progressPct + "%";
     }
 
     function loadQuestion(idx) {
@@ -873,7 +878,7 @@
       const answeredCount = Object.keys(studentAnswers).length;
       if (answeredCount < rawQuestions.length) {
         const pending = rawQuestions.length - answeredCount;
-        if (!confirm(`⚠️ Aún tiene ${pending} pregunta(s) sin responder. ¿Está completamente seguro de que desea finalizar y calificar ahora?`)) {
+        if (!confirm("⚠️ Aún tiene " + pending + " pregunta(s) sin responder. ¿Está completamente seguro de que desea finalizar y calificar ahora?")) {
           return;
         }
       } else {
@@ -882,7 +887,7 @@
       finishExam(false);
     });
 
-    // --- FINISH & SCORE ---
+    // --- FINISH, SCORE & AUTO-SYNC TO GOOGLE SHEETS ---
 
     function finishExam(lockedByInfractions) {
       examFinished = true;
@@ -903,18 +908,19 @@
         }
       });
 
-      const totalScore = correctCount * 5; // 20 preguntas x 5 pts = 100 pts
+      // 50 PREGUNTAS x 2 PUNTOS = 100 PUNTOS
+      const totalScore = correctCount * 2; 
+      const timestampStr = new Date().toLocaleString("es-PA");
+      const hashToken = btoa(studentData.id + "-" + totalScore + "-" + Date.now()).substring(0, 16).toUpperCase();
 
       document.getElementById("final-score").textContent = totalScore;
       document.getElementById("res-name").textContent = studentData.name;
       document.getElementById("res-id").textContent = studentData.id;
       document.getElementById("res-group").textContent = studentData.group;
-      document.getElementById("res-date").textContent = new Date().toLocaleString("es-PA");
+      document.getElementById("res-date").textContent = timestampStr;
       document.getElementById("res-correct").textContent = correctCount;
-      document.getElementById("res-infractions").textContent = `${infractions} / ${MAX_INFRACTIONS}` + (lockedByInfractions ? " (BLOQUEO POR INFRACCIONES)" : " (Válido)");
-
-      const hashToken = btoa(`${studentData.id}-${totalScore}-${Date.now()}`).substring(0, 16).toUpperCase();
-      document.getElementById("res-hash").textContent = `VERIF-${hashToken}`;
+      document.getElementById("res-infractions").textContent = infractions + " / " + MAX_INFRACTIONS + (lockedByInfractions ? " (BLOQUEO POR INFRACCIONES)" : " (Válido)");
+      document.getElementById("res-hash").textContent = "VERIF-" + hashToken;
 
       const statusTitle = document.getElementById("status-title");
       const statusDesc = document.getElementById("status-desc");
@@ -931,6 +937,45 @@
         statusTitle.textContent = "Examen No Aprobado";
         statusTitle.style.color = "var(--danger)";
         statusDesc.textContent = "Su puntaje es inferior al mínimo aprobatorio de 71 puntos.";
+      }
+
+      // AUTO-SYNC TO GOOGLE SHEETS VIA WEBHOOK
+      if (GOOGLE_SHEET_WEBHOOK_URL && GOOGLE_SHEET_WEBHOOK_URL.startsWith("http")) {
+        const syncBox = document.getElementById("sync-status-box");
+        syncBox.style.display = "block";
+        syncBox.style.background = "#fff8e1";
+        syncBox.style.color = "#795548";
+        syncBox.style.borderColor = "#ffe082";
+        syncBox.textContent = "⏳ Enviando nota a la planilla oficial de Google Sheets...";
+
+        const payload = {
+          fecha: timestampStr,
+          nombre: studentData.name,
+          cedula: studentData.id,
+          grupo: studentData.group,
+          nota: totalScore,
+          aciertos: correctCount + "/50",
+          infracciones: infractions,
+          codigoVerificacion: "VERIF-" + hashToken,
+          estado: lockedByInfractions ? "BLOQUEADO" : (totalScore >= 71 ? "APROBADO" : "REPROBADO")
+        };
+
+        fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }).then(() => {
+          syncBox.style.background = "#e8f5e9";
+          syncBox.style.color = "#2e7d32";
+          syncBox.style.borderColor = "#a5d6a7";
+          syncBox.textContent = "✅ Nota registrada exitosamente en la planilla de Google Sheets del docente.";
+        }).catch(() => {
+          syncBox.style.background = "#ffebee";
+          syncBox.style.color = "#c62828";
+          syncBox.style.borderColor = "#ef9a9a";
+          syncBox.textContent = "⚠️ No se pudo sincronizar automáticamente con Google Sheets. Guarde su captura de pantalla.";
+        });
       }
     }
   </script>
